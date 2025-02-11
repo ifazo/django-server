@@ -1,0 +1,33 @@
+# Ignore the virtual environment folder
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore database files
+db.sqlite3
+*.sqlite3
+
+# Django log files
+*.log
+
+# Environment variables and secrets
+.env
+*.env
+
+# Ignore IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore compiled Python files
+*.egg-info/
+*.egg
+
+# Ignore static and media files (optional)
+staticfiles/
+media/
