@@ -35,7 +35,7 @@ SECRET_KEY = 'django-insecure-hv@=k#e+iz!3#sd70$48@kt0_sm=#jc&jtdm=eb2f%tn*#n6@m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['ifaz-django-server.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
