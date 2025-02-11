@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.http import JsonResponse
 
 def home_view(request):
-    return JsonResponse({"message": "Welcome to the Django API server!"})
+    return JsonResponse({"message": "Welcome to the Django Server!"})
 
 urlpatterns = [
     path('', home_view, name='home'),
