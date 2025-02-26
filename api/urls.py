@@ -1,7 +1,7 @@
-from django.urls import path
+from django.urls import path, include
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .views import signup_user, signin_user, user_list, user_by_id, product_list, category_list, product_by_id, category_by_id, review_list, review_by_id
+from .views import user_list, user_by_id, product_list, category_list, product_by_id, category_by_id, review_list, review_by_id
 
 @api_view(['GET'])
 def api_home(request):
@@ -9,8 +9,7 @@ def api_home(request):
 
 urlpatterns = [
         path('', api_home, name='api_home'),
-        path('signup/', signup_user, name='signup'),
-        path('signin/', signin_user, name='signin'),
+        path('auth/', include('api.auth.urls')),
         path('users/', user_list, name='user_list'),
         path('users/<uuid:user_id>/', user_by_id, name='user_by_id'),
         path('categories/', category_list, name='category_list'),
