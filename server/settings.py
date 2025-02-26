@@ -53,7 +53,7 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': 'django_secret_key',  # Use env variables in production
+    'SIGNING_KEY': SECRET_KEY,
 }
 
 MIDDLEWARE = [

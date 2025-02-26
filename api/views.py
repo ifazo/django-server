@@ -5,36 +5,66 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
-from .models import Product, Category, Review
-from .serializers import UserSignupSerializer, ProductSerializer, CategorySerializer, ReviewSerializer
+from .models import User, Product, Category, Review
+from .serializers import SignupSerializer, UserSerializer, ProductSerializer, CategorySerializer, ReviewSerializer
 
 @api_view(['POST'])
-def signup_view(request):
-    serializer = UserSignupSerializer(data=request.data)
+def signup_user(request):
+    serializer = SignupSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
-        refresh = RefreshToken.for_user(user)
+        refresh_token = RefreshToken.for_user(user)
         return Response({
             'user': serializer.data,
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
+            'refresh_token': str(refresh_token),
+            'access_token': str(refresh_token.access_token),
         }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
-def login_view(request):
+def signin_user(request):
     username = request.data.get('username')
     password = request.data.get('password')
     user = authenticate(username=username, password=password)
 
     if user:
-        refresh = RefreshToken.for_user(user)
+        refresh_token = RefreshToken.for_user(user)
         return Response({
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
+            'refresh_token': str(refresh_token),
+            'access_token': str(refresh_token.access_token),
         }, status=status.HTTP_200_OK)
     return Response({"error": "Invalid Credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def user_list(request):
+    users = User.objects.all()
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET', 'PATCH', 'DELETE'])
+def user_by_id(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = CategorySerializer(user)
+        return Response(serializer.data)
+
+    if user != request.user:
+        return Response({"error": "You can only update or delete your own account"}, status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == 'PATCH':
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        user.delete()
+        return Response({"message": "User deleted"}, status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET', 'POST'])
 def category_list(request):
