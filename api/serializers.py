@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User as Auth
+from django.contrib.auth.hashers import check_password
 from .models import User, Category, Product, Review, Order
 
 class SignupSerializer(serializers.ModelSerializer):
@@ -19,10 +19,31 @@ class SignupSerializer(serializers.ModelSerializer):
         if 'image' in validated_data:
             user.image = validated_data['image']
         user.save()
-        auth = Auth.objects.create(username=user.username, password=user.password)
-        auth.save()
         return user
 
+
+class SigninSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        username = data.get('username')
+        password = data.get('password')
+
+        if not username or not password:
+            raise serializers.ValidationError("Must include 'username' and 'password'")
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Invalid credentials")
+
+        if not check_password(password, user.password):
+            raise serializers.ValidationError("Invalid credentials")
+
+        data['user'] = user
+        return data
+    
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
