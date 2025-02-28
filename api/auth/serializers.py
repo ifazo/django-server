@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import check_password
-from api.models import User
+from api.users.models import User
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 
 class SignupSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -13,7 +15,8 @@ class SignupSerializer(serializers.ModelSerializer):
         user = User(
             username=validated_data['username'],
             email=validated_data['email'],
-            role=validated_data['role']
+            role=validated_data['role'],
+            is_active=True
         )
         user.set_password(validated_data['password'])
         if 'image' in validated_data:
@@ -44,3 +47,16 @@ class SigninSerializer(serializers.Serializer):
         data['user'] = user
         return data
     
+       
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        
+        token['user_id'] = user.id
+        token['username'] = user.username
+        token['email'] = user.email
+        token['role'] = user.role
+        
+        return token
+

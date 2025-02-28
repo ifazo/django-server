@@ -10,8 +10,8 @@ class Review(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     review = models.TextField(max_length=255)
-    user_id = models.ForeignKey(User, to_field="id", related_name='reviews', on_delete=models.CASCADE)
     product_id = models.ForeignKey(Product, to_field="id", related_name='reviews', on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, to_field="id", related_name='reviews', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

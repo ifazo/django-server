@@ -5,7 +5,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from .models import User
 from .serializers import UserSerializer
-from uuid import UUID
 
 @api_view(['GET'])
 def user_list(request):
@@ -18,10 +17,8 @@ def user_list(request):
     })
 
 @api_view(['GET', 'PATCH', 'DELETE'])
-@permission_classes([IsAuthenticated])
 def user_by_id(request, user_id):
     try:
-        user_id = UUID(user_id)
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:
         return Response({
@@ -43,13 +40,6 @@ def user_by_id(request, user_id):
             'message': 'User retrieved successfully',
             'data': serializer.data
         })
-
-    if user != request.user:
-        return Response({
-            'success': False,
-            'message': 'You can only update or delete your own account',
-            'errors': {'user': 'Permission denied'}
-        }, status=status.HTTP_403_FORBIDDEN)
 
     if request.method == 'PATCH':
         serializer = UserSerializer(user, data=request.data, partial=True)

@@ -3,7 +3,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import SignupSerializer, SigninSerializer
+from .serializers import SignupSerializer, SigninSerializer, CustomTokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 @api_view(['POST'])
@@ -50,3 +51,7 @@ def signin_user(request):
         'message': 'Invalid credentials',
         'errors': serializer.errors
     }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer

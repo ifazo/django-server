@@ -33,6 +33,7 @@ def product_list(request):
             'errors': serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET', 'PATCH', 'DELETE'])
 def product_by_id(request, product_id):
     try:

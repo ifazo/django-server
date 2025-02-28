@@ -5,8 +5,6 @@ from rest_framework import status
 from .models import Category
 from .serializers import CategorySerializer
 
-# Create your views here.
-
 
 @api_view(['GET', 'POST'])
 def category_list(request):
