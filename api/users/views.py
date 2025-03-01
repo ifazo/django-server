@@ -8,7 +8,11 @@ from .serializers import UserSerializer
 
 @api_view(['GET'])
 def user_list(request):
-    users = User.objects.all()
+    role = request.query_params.get('role')
+    if role:
+        users = User.objects.filter(role=role)
+    else:
+        users = User.objects.all()
     serializer = UserSerializer(users, many=True)
     return Response({
         'success': True,

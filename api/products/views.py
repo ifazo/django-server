@@ -5,12 +5,15 @@ from rest_framework import status
 from .models import Product
 from .serializers import ProductSerializer
 
-# Create your views here.
 
 @api_view(['GET', 'POST'])
 def product_list(request):
     if request.method == 'GET':
-        products = Product.objects.all()
+        category_id = request.query_params.get('category_id')
+        if category_id:
+            products = Product.objects.filter(category_id=category_id)
+        else:
+            products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
         return Response({
             'success': True,
